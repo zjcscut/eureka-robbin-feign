@@ -1,5 +1,6 @@
 package org.throwable.common.support;
 
+import com.netflix.appinfo.InstanceInfo;
 import com.netflix.appinfo.MyDataCenterInstanceConfig;
 import com.netflix.client.ClientFactory;
 import com.netflix.config.ConfigurationManager;
@@ -76,5 +77,9 @@ public class DefaultApplicationAddressSelector implements ApplicationAddressSele
 		System.out.println(choose);
 		Application application = DiscoveryManager.getInstance().getDiscoveryClient().getApplication("order-server");
 		System.out.println(application);
+		//下面的这个vipAddress就是eureka注册中心的每个项目的spring-application-name
+		List<InstanceInfo> instancesByVipAddress = DiscoveryManager.getInstance().getDiscoveryClient().getInstancesByVipAddress("order-server", false);
+		InstanceInfo next = instancesByVipAddress.iterator().next();
+		next.getHostName();
 	}
 }

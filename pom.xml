@@ -57,6 +57,13 @@
             <version>0.7.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>9.5.1</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <finalName>eureka-robbin-feign</finalName>
