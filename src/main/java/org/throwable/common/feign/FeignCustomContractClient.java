@@ -6,10 +6,7 @@ import org.throwable.common.feign.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author throwable
@@ -31,9 +28,11 @@ public class FeignCustomContractClient {
     private static class CustomContract extends Contract.BaseContract {
 
         @Override
-        protected void processAnnotationOnClass(MethodMetadata data, Class<?> clz) {
-            System.out.println("MethodMetadata --> " + data);
-            System.out.println("Target --> " + clz);
+        protected void processAnnotationOnClass(MethodMetadata data, Class<?> targetType) {
+            if (targetType.isAnnotationPresent(RequestHeaders.class)){
+                String[] headersOnType = targetType.getAnnotation(RequestHeaders.class).value();
+
+            }
         }
 
         @Override
@@ -71,7 +70,7 @@ public class FeignCustomContractClient {
                         String name = '{' + pathValue.name() + '}';
                         if (!searchMapValuesContainsSubstring(data.template().headers(), name)
                                 && !searchMapValuesContainsSubstring(data.template().queries(), name)){
-                            data.formParams().add(name);
+
                         }
                     }
                 }
@@ -100,6 +99,21 @@ public class FeignCustomContractClient {
                 }
             }
             return false;
+        }
+
+        private static Map<String, Collection<String>> toMap(String[] input) {
+            Map<String, Collection<String>>
+                    result =
+                    new LinkedHashMap<>(input.length);
+            for (String header : input) {
+                int colon = header.indexOf(':');
+                String name = header.substring(0, colon);
+                if (!result.containsKey(name)) {
+                    result.put(name, new ArrayList<>(1));
+                }
+                result.get(name).add(header.substring(colon + 2));
+            }
+            return result;
         }
     }
 
